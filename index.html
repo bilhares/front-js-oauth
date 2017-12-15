@@ -1,0 +1,35 @@
+<html>
+
+<head></head>
+
+<body>
+    <form name="form_login" method="POST" id="form_login_id" onsubmit="logar()">
+
+        <div class="container">
+            <label>
+                <b>Username</b>
+            </label>
+            <input type="text" placeholder="Enter Username" name="user" id="user" required>
+
+            <label>
+                <b>Password</b>
+            </label>
+            <input type="password" placeholder="Enter Password" name="pass" id="pass" required>
+
+            <button type="submit">Login</button>
+            <input type="checkbox" checked="checked"> Remember me
+        </div>
+
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" class="cancelbtn">Cancel</button>
+            <span class="psw">Forgot
+                <a href="#">password?</a>
+            </span>
+        </div>
+    </form>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/tokenController.js"></script>
+    <script src="js/LoginController.js"></script>
+</body>
+</html>

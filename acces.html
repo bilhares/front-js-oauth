@@ -1,0 +1,105 @@
+<html>
+
+<body>
+
+	<button onclick="enviar()">Buscar access token</button>
+
+	<a href="#home">home</a>
+	<a href="#contato">Contato</a>
+	<div id="conteudo">
+
+	</div>
+	<script src="jquery-3.2.1.min.js"></script>
+	<script>
+
+		$(function () {
+			$(window).on('hashchange', hashchanged);
+			hashchanged();
+		});
+
+		function isValidToken(token) {
+			cTs = Math.floor(Date.now() / 1000);
+			console.log(cTs + '  ' + token.expires_in);
+			return (token.expires_in >= cTs);
+		}
+
+		const checkTokenExpirationMiddleware = store => next => action => {
+			const token =
+				JSON.parse(localStorage.getItem("token"));
+			if (jwtDecode(token).exp < Date.now() / 1000) {
+				console.log('invalido');
+				next(action);
+				localStorage.clear();
+			}
+			console.log('valido');
+			next(action);
+		};
+
+		function hashchanged() {
+			var hash = location.hash.replace(/[#\/]/g, '') || 'home';
+		//	const token = localStorage.getItem('token');
+			
+
+			const token =
+				localStorage.getItem("token");
+			if (parseJwt(token).exp < Date.now() / 1000) {
+				console.log('invalido');
+				//next(action);
+				localStorage.clear();
+			}
+			console.log('valido');
+		//	next(action);
+
+		//	if (isValidToken(token)) {
+				$("#conteudo").load(hash + '.html');
+		//	} else {
+				$("#conteudo").load('erro.html');
+		//	}
+		}
+
+		window.onload = function () {
+			const token = localStorage.getItem('token');
+			if (token != null) {
+				console.log(token);
+			}
+		}
+
+		function parseJwt(token) {
+			var base64Url = token.split('.')[1];
+			var base64 = base64Url.replace('-', '+').replace('_', '/');
+			console.log(JSON.parse(window.atob(base64)));
+			return JSON.parse(window.atob(base64));
+		}
+
+		function printResponse(token) {
+			console.log(token);
+			localStorage.setItem('token', token);
+			parseJwt(token);
+		}
+		function enviar() {
+			new Promise((resolve, reject) => {
+				var req = new XMLHttpRequest();
+				req.withCredentials = true;
+				req.open("POST", "http://localhost:8080/oauth/token");
+				req.setRequestHeader("Authorization", "Basic YW5ndWxhcjoxMjM=");
+				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+				req.onreadystatechange = () => {
+					if (req.readyState == 4) {
+						if (req.status == 200) {
+							resolve(console.log(JSON.parse(req.responseText)));
+							printResponse(req.responseText);
+							window.open('#contato', "_self");
+						} else {
+							console.log(req.responseText);
+							reject(req.responseText);
+						}
+					}
+				};
+				req.send("username=admin@algamoney.com&password=admin&grant_type=password");
+			});
+		}
+	</script>
+</body>
+
+</html>
