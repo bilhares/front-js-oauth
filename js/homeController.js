@@ -24,6 +24,7 @@ function logout() {
 window.onload = function() {
   setUsername();
   verifyRoles();
+  $("#overlay").hide();
 };
 
 function setUsername() {
